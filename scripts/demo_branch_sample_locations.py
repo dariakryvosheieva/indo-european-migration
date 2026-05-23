@@ -4,7 +4,7 @@ Renders the branch attestation sample points used by the branch-level
 analysis, with both candidate Indo-European homelands marked as simultaneous
 starting locations.
 
-Saves ``figs/branch_sample_locations_dual_start.png``.
+Saves ``figs/demo_branch_sample_locations.png``.
 """
 
 from __future__ import annotations
@@ -84,7 +84,7 @@ def main() -> None:
 
     fig.tight_layout()
     FIGS_DIR.mkdir(exist_ok=True)
-    out_path = FIGS_DIR / "branch_sample_locations_dual_start.png"
+    out_path = FIGS_DIR / "demo_branch_sample_locations.png"
     fig.savefig(out_path, dpi=140, bbox_inches="tight")
     print(f"saved {out_path}")
 

@@ -4,13 +4,11 @@ Runs (or loads cached) a 5000-year simulation under a chosen homeland
 scenario, samples lexicons at the historical attestation locations of
 the major Indo-European branches, and produces:
 
-1. A pairwise cognate-distance heatmap, alongside a map of sample
-   locations.
+1. A pairwise cognate-distance heatmap.
 2. A UPGMA dendrogram with tip labels colored by family and bands marking
    the empirical IE families.
 
-Usage::
-
+Usage:
     python scripts/demo_branch_analysis.py --scenario steppe
     python scripts/demo_branch_analysis.py --scenario anatolian
     python scripts/demo_branch_analysis.py --scenario steppe --force
@@ -75,45 +73,17 @@ def order_by_family(extracted: dict) -> list[str]:
 
 def plot_heatmap(
     extracted: dict,
-    geo,
     out_path: Path,
     scenario: Scenario,
     n_years: int,
 ) -> None:
-    """Two-panel figure: sample-location map + pairwise-distance heatmap."""
+    """Pairwise cognate-distance heatmap."""
     ordered_names = order_by_family(extracted)
     M, names = cognate_distance_matrix(extracted, order=ordered_names)
     n = len(names)
     colors = [extracted[name][0].color for name in names]
 
-    fig = plt.figure(figsize=(16, 7.5))
-    gs = fig.add_gridspec(1, 2, width_ratios=[1.05, 1.0], wspace=0.18)
-    ax_map = fig.add_subplot(gs[0, 0])
-    ax_hm = fig.add_subplot(gs[0, 1])
-
-    geo.plot(ax=ax_map, show_legend=False)
-    ax_map.plot(scenario.seed_lon, scenario.seed_lat, marker="*",
-                color="red", markersize=22,
-                markeredgecolor="black", markeredgewidth=1.2, zorder=12)
-    ax_map.annotate(
-        f"PIE seed\n({scenario.pretty_name})",
-        xy=(scenario.seed_lon, scenario.seed_lat),
-        xytext=(10, 10), textcoords="offset points",
-        fontsize=9, fontweight="bold",
-        bbox=dict(boxstyle="round,pad=0.3", fc="white", ec="black", alpha=0.85),
-        zorder=13,
-    )
-    for name, (s, _lex, _cell) in extracted.items():
-        ax_map.plot(s.lon, s.lat, "o", color=s.color, markersize=11,
-                    markeredgecolor="white", markeredgewidth=1.0, zorder=10)
-        ax_map.annotate(
-            name, xy=(s.lon, s.lat), xytext=(7, 4), textcoords="offset points",
-            fontsize=8.5, color="black",
-            bbox=dict(boxstyle="round,pad=0.2", fc="white", ec="none", alpha=0.8),
-        )
-    ax_map.set_xlim(geo.lon_min, geo.lon_max)
-    ax_map.set_ylim(geo.lat_min, geo.lat_max)
-    ax_map.set_title("Branch sample locations")
+    fig, ax_hm = plt.subplots(figsize=(9, 7.5))
 
     im = ax_hm.imshow(M, cmap="viridis_r", vmin=0.0, vmax=1.0, aspect="equal")
     cbar = fig.colorbar(im, ax=ax_hm, fraction=0.046, pad=0.04)
@@ -318,7 +288,7 @@ def main() -> None:
     suffix = f"_{'_'.join(suffix_parts)}" if suffix_parts else ""
 
     plot_heatmap(
-        extracted, pop.geo,
+        extracted,
         FIGS_DIR / f"{scenario.name}_branch_similarity{suffix}.png",
         scenario,
         args.n_years,

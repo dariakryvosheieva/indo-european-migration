@@ -34,12 +34,6 @@ EARTH_RADIUS_KM = 6371.0
 
 class Terrain(IntEnum):
     """Coarse terrain classes used throughout the simulation.
-
-    ``STRAIT`` is a narrow water body (English Channel, Irish Sea, Strait
-    of Otranto) — high but *finite* friction, so migration across is
-    slow but possible (capturing the well-attested fact that Bronze and
-    Iron Age peoples crossed these waters in boats). Ocean proper has
-    infinite friction and is impassable.
     """
 
     OCEAN = 0
@@ -68,15 +62,6 @@ TERRAIN_PROPS: dict[int, TerrainProps] = {
     int(Terrain.DESERT):    TerrainProps(3.0,    0.05, "#E0C786", "desert"),
     int(Terrain.MOUNTAIN):  TerrainProps(5.0,    0.10, "#888888", "mountain"),
     int(Terrain.TUNDRA):    TerrainProps(2.5,    0.10, "#D5E5E0", "tundra"),
-    # Narrow strait: a sea easily crossed by boat in calm season
-    # (English Channel, Strait of Otranto). Friction matches desert
-    # — a real but moderate barrier — and capacity matches mountain,
-    # so strait cells carry enough population to act as a meaningful
-    # borrowing channel between the two coasts they connect (e.g.,
-    # Britain ↔ continental Celtic, Italy ↔ Balkans). They are not
-    # quite habitable in their own right, but neither are they the
-    # near-impassable barriers that a higher-friction setting makes
-    # them.
     int(Terrain.STRAIT):    TerrainProps(3.0,    0.10, "#7DB6D9", "strait"),
 }
 
@@ -269,7 +254,7 @@ class Geography:
 
 
 def stylized_eurasia(cell_size: float = 1.0) -> Geography:
-    """Anatomically-improved approximation of Eurasian geography.
+    """Approximation of Eurasian geography.
 
     Coverage: 8-72 °N, 15 °W to 110 °E. Designed to encode the terrain
     features relevant to Indo-European migrations as accurately as
